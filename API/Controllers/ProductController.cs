@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace API.Controllers
 {
-   [EnableCors("CorsPolicy")]
+   
     public class ProductController : BaseApiController
     {
         private readonly IGenericRepository<Product> _productsRepo;
