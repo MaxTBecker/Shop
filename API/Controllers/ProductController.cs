@@ -8,6 +8,7 @@ using API.DTOs;
 using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Cors;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -42,13 +43,23 @@ namespace API.Controllers
             return Ok(productTypes);
         }
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProduct()
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProduct(
+            [FromQuery]ProductSpecParams productParams)
         {
-            var spec = new ProductsWithTypeAndBrandsSpecification();
+            var spec = new ProductsWithTypeAndBrandsSpecification(productParams);
+
+            var count = new ProductWithFiltersCountSpecifícation(productParams);
+
+            var totalItems = await _productsRepo.CountAsync(count);
+
             var products = await _productsRepo.ListAsync(spec);
-            return Ok(_mapper
+
+            var data = _mapper
                 .Map<IReadOnlyList<Product>,
-                    IReadOnlyList<ProductToReturnDto>>(products));
+                    IReadOnlyList<ProductToReturnDto>>(products);
+
+           
+            return Ok( new Pagination<ProductToReturnDto>(productParams.PageIndex,productParams.PageSize,totalItems,data));
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)

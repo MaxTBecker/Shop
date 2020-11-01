@@ -1,4 +1,6 @@
 import { HttpClient } from '@angular/common/http';
+import { IProduct } from 'F:/angular/OnlineShop/client/src/models/product';
+import { IPagination } from 'F:/angular/OnlineShop/client/src/models/pagination';
 import { Component, OnInit } from '@angular/core';
 
 
@@ -10,15 +12,16 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
 
   title = 'Online Shop';
-
+  products: IProduct[];
   constructor(private http: HttpClient)
   {
 
   }
   ngOnInit(): void {
-    this.http.get('https://localhost:5001/api/product').subscribe((response: any) =>
+    this.http.get('https://localhost:5001/api/product').subscribe(
+      (response: any) =>
     {
-      console.log(response);
+      this.products = response;
     }, error =>
     {
       console.log(error);
